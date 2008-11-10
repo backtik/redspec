@@ -149,8 +149,8 @@ end
 class Spec  
   attr_accessor :name, :block, :examples, :runner
   
-  def self.describe(name, &block)
-    s = Spec.new(name, &block)
+  def self.describe(name, description = nil, &block)
+    s = Spec.new(name, description, &block)
     RedSpec.specs << s
     block.call(s)
   end
@@ -197,7 +197,7 @@ class Spec
   
   def to_html_with_examples
     "<li id=\"spec_#{self.object_id.to_s}\">
-       <h3>#{RedSpec.escape_tags(self.name)} [<a href=\"?rerun=#{self.name}\">rerun</a>]</h3>
+       <h3>#{RedSpec.escape_tags(self.name)} #{RedSpec.escape_tags(self.description)} [<a href=\"?rerun=#{self.name}\">rerun</a>]</h3>
        <ul id=\"spec_#{self.object_id.to_s}_examples\" class=\"examples\">
          #{self.examples_to_html}
        </ul>
