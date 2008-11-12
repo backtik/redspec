@@ -218,6 +218,11 @@ class Spec
 end
 
 module Specs
+  # class +MockObject+ provides a simple way to create anonymous objects
+  # and spcificy their methods and return values
+  class MockObject
+  end
+  
   # class +Failure+ is raise when an +Example+ fails to behave as intended. 
   # +Failure+ is rescued by the +Runner+ which notes the failure and
   # continues to run subsequent Examples.
@@ -529,5 +534,6 @@ main = lambda {
 # Wait for the window to load and then determing run the specs
 # `window.onload = #{main}.__block__`
 
+`m$mock = c$Specs.c$MockObject.m$new`
 `m$describe = c$Spec.m$describe`
 `document.addEventListener('DOMContentLoaded', function(){document.__loaded__=true;#{main.call};}.m$(this), false)`
