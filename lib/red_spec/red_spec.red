@@ -60,6 +60,9 @@ module DSL
       raise ::Specs::Failure if self == nil
     end
   
+    # TODO: implement
+    def behaves_like(a,b); true; end
+
     # here for polymorphic purposes. all objects will need to respond
     # to these but having these methods called implies you are
     # are not getting a object you intended. 
