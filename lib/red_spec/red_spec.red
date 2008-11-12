@@ -183,6 +183,10 @@ class Spec
     self.verb("does not", description, &block)
   end
   
+  def yields(description, &block)
+    self.verb("yields", description, &block)
+  end
+  
   def to_heading_html
     "<li id=\"spec_#{self.object_id.to_s}_list\"><h3><a href=\"#spec_#{self.object_id.to_s}\"> #{RedSpec.escape_tags(self.name)}</a> [<a href=\"?rerun=#{self.name}\">rerun</a>]</h3></li>"
   end
@@ -522,4 +526,5 @@ main = lambda {
 # Wait for the window to load and then determing run the specs
 # `window.onload = #{main}.__block__`
 
+`m$describe = c$Spec.m$describe`
 `document.addEventListener('DOMContentLoaded', function(){document.__loaded__=true;#{main.call};}.m$(this), false)`
