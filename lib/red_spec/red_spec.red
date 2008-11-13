@@ -150,16 +150,17 @@ class RedSpec
 end
 
 class Spec  
-  attr_accessor :name, :block, :examples, :runner
+  attr_accessor :name, :block, :examples, :runner, :description
   
-  def self.describe(name, description = nil, &block)
-    s = Spec.new(name, description, &block)
+  def self.describe(name, &block)
+    s = Spec.new(name, &block)
     RedSpec.specs << s
     block.call(s)
   end
   
   def initialize(name, &block)
     @name  =  name.to_s
+    @description = ''
     @block = block
     @examples = []
   end
@@ -188,6 +189,14 @@ class Spec
   
   def yields(description, &block)
     self.verb("yields", description, &block)
+  end
+  
+  def will(description, &block)
+    self.verb("will", description, &block)
+  end
+  
+  def raises(description, &block)
+    self.verb("raises", description, &block)
   end
   
   def to_heading_html
@@ -221,6 +230,9 @@ module Specs
   # class +MockObject+ provides a simple way to create anonymous objects
   # and spcificy their methods and return values
   class MockObject
+    def initialize(value)
+      @value = value
+    end
   end
   
   # class +Failure+ is raise when an +Example+ fails to behave as intended. 
