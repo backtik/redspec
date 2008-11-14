@@ -62,6 +62,8 @@ module DSL
   
     # TODO: implement
     def behaves_like(a,b); true; end
+    def should_receive(*args); true; end
+    def should_be_kind_of; true; end
 
     # here for polymorphic purposes. all objects will need to respond
     # to these but having these methods called implies you are
@@ -233,6 +235,8 @@ module Specs
     def initialize(value)
       @value = value
     end
+    def should_receive(*args); true; end
+    def with(*args); true; end
   end
   
   # class +Failure+ is raise when an +Example+ fails to behave as intended. 
@@ -299,6 +303,7 @@ module Specs
       self.total_examples = 0
       self.total_pending  = 0
       self.total_failures = 0
+      self.total_errors   = 0
       self.add_all_specs(arg_specs)
     end
     
@@ -353,7 +358,12 @@ module Specs
           self.type = 'pending'
           self.example.spec.runner.total_pending += 1
         else
-          self.example.block.call 
+          `try {
+            this.m$example().m$block().m$call()
+           } catch(e) {
+             console.log(e)
+             #{raise ::Specs::Error}
+           }`
         end
         
         self.type = 'success'
@@ -363,8 +373,8 @@ module Specs
         self.type = 'failure'
         self.example.result = 'failure'
         self.example.spec.runner.total_failures += 1
-      rescue Exception
-        self.example.rescue = 'exception'
+      rescue ::Specs::Error
+        self.example.result = 'exception'
         self.example.spec.runner.total_errors += 1
       end
             
