@@ -26,7 +26,6 @@
 # Using:
 # RedSpec is intended for use with Red Herring, the framework-independant Red runner (url)
 
-
 module DSL
   # +DSL::Base+ represents the basic syntax that all Red objects should have to
   # work properly with RedSpec. It also includes stub methods for methods that 
@@ -352,7 +351,6 @@ module Specs
     
     def run
       ::Specs::Logger.on_example_start(self.example)
-
       begin
         if self.example.result # result was set to pending on Example#initialize
           self.type = 'pending'
@@ -361,7 +359,6 @@ module Specs
           `try {
             this.m$example().m$block().m$call()
            } catch(e) {
-             console.log(e)
              #{raise ::Specs::Error}
            }`
         end
@@ -374,8 +371,8 @@ module Specs
         self.example.result = 'failure'
         self.example.spec.runner.total_failures += 1
       rescue ::Specs::Error
-        self.example.result = 'exception'
-        self.example.spec.runner.total_errors += 1
+        self.example.result = 'exception'   
+        self.example.spec.runner.total_errors += 1        
       end
             
       ::Specs::Logger.on_example_end(self.example)
@@ -510,11 +507,11 @@ module Specs
     
     # called automatically when a runner ends, updating the dashboard with result information for
     # the entire spec suite.
-    def on_runner_end
-      `document.getElementById("total_elapsed").innerHTML = (#{Time.now - self.started_at })`
-      `document.getElementById("total_failures").innerHTML = #{self.runner.total_errors}`
+    def on_runner_end      
+      `document.getElementById("total_elapsed").innerHTML  = (#{Time.now - self.started_at})`
+      `document.getElementById("total_errors").innerHTML = #{self.runner.total_errors}`
       `document.getElementById("total_failures").innerHTML = #{self.runner.total_failures}`
-      `document.getElementById("total_pending").innerHTML = #{self.runner.total_pending}`
+      `document.getElementById("total_pending").innerHTML  = #{self.runner.total_pending}`
     end
         
     def self.on_spec_start(spec)
