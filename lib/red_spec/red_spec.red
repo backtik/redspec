@@ -58,11 +58,14 @@ module DSL
     def should_not_be_nil
       raise ::Specs::Failure if self == nil
     end
+    
+    def should_be_kind_of(klass)
+      raise ::Specs::Failure unless self.class == klass
+    end
   
     # TODO: implement
     def behaves_like(a,b); true; end
     def should_receive(*args); true; end
-    def should_be_kind_of; true; end
 
     # here for polymorphic purposes. all objects will need to respond
     # to these but having these methods called implies you are
@@ -151,7 +154,7 @@ class RedSpec
 end
 
 class Spec  
-  attr_accessor :name, :block, :examples, :runner, :description
+  attr_accessor :name, :block, :before_each_block, :examples, :runner, :description
   
   def self.describe(name, &block)
     s = Spec.new(name, &block)
@@ -162,8 +165,19 @@ class Spec
   def initialize(name, &block)
     @name  =  name.to_s
     @description = ''
+    @before_all_block   = lambda {true}
+    @before_each_block  = lambda {true}
     @block = block
     @examples = []
+  end
+  
+  def before(type, &block)
+    if type == :each
+      @before_each_block = block
+    else
+      @before_all_block  = block
+      @before_all_block.call
+    end
   end
   
   # the meat of the verb calls on 'it' ('can', 'has', 'does', 'wants', etc).
@@ -188,6 +202,14 @@ class Spec
     self.verb("does not", description, &block)
   end
   
+  def tries(description, &block)
+    self.verb("tries", description, &block)
+  end
+  
+  def checks(description, &block)
+    self.verb("checks", description, &block)
+  end
+  
   def yields(description, &block)
     self.verb("yields", description, &block)
   end
@@ -196,9 +218,15 @@ class Spec
     self.verb("will", description, &block)
   end
   
+  def is_not(description, &block)
+    self.verb("is not", description, &block)
+  end
+  
   def raises(description, &block)
     self.verb("raises", description, &block)
   end
+  
+  def behaves_like(the_one, the_other); true; end
   
   def to_heading_html
     "<li id=\"spec_#{self.object_id.to_s}_list\"><h3><a href=\"#spec_#{self.object_id.to_s}\"> #{RedSpec.escape_tags(self.name)}</a> [<a href=\"?rerun=#{self.name}\">rerun</a>]</h3></li>"
@@ -351,13 +379,14 @@ module Specs
     
     def run
       ::Specs::Logger.on_example_start(self.example)
+      #self.example.spec.before_block.call
       begin
         if self.example.result # result was set to pending on Example#initialize
           self.type = 'pending'
           self.example.spec.runner.total_pending += 1
         else
           `try {
-            this.m$example().m$block().m$call()
+            this.m$example().m$block().m$call();
            } catch(e) {
              #{raise ::Specs::Error}
            }`
@@ -555,4 +584,5 @@ main = lambda {
 
 `m$mock = c$Specs.c$MockObject.m$new`
 `m$describe = c$Spec.m$describe`
+`m$before   = c$Spec.m$before`
 `document.addEventListener('DOMContentLoaded', function(){document.__loaded__=true;#{main.call};}.m$(this), false)`
