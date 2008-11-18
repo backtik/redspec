@@ -184,8 +184,8 @@ class Spec
   
   # the meat of the verb calls on 'it' ('can', 'has', 'does', 'wants', etc).
   # allows us to add new verbs and stay DRY.
-  def verb(display_verb, description, &block)
-    self.examples << ::Specs::Example.new((display_verb + " " + description), self, &block)
+  def verb(display_verb, description, proc)
+    self.examples << ::Specs::Example.new((display_verb + " " + description), self, proc)
   end
   
   def can(description, &block)
