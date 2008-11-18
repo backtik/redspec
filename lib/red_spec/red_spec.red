@@ -103,10 +103,12 @@ module DSL
   end
   
   module Proc
+    # TODO: implement
     def should_raise(specific_exception = nil)
       
     end
     
+    # TODO: implement
     def should_not_raise(specific_exception = nil)
       
     end
